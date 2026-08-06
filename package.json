@@ -8,7 +8,7 @@
     "app-id": ""
   },
   "scripts": {
-    "build": "pnpm build:weapp",
+    "build": "pnpm build:web",
     "build:weapp": "taro build --type weapp",
     "build:web": "taro build --type h5",
     "dev": "pnpm dev:web",
