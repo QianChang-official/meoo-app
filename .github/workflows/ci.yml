@@ -1,0 +1,76 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+# 同一 ref 的新提交取消旧 run，防止浪费
+concurrency:
+  group: ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+# 最小权限：只需读仓库内容，不需要写权限/secrets
+permissions:
+  contents: read
+
+jobs:
+  install:
+    name: Install (pnpm frozen)
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      # pnpm 无全局安装的解法：官方 action 装 pnpm 9
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install dependencies (frozen)
+        run: pnpm install --frozen-lockfile
+
+  validate:
+    name: Validate (lint + tsc)
+    needs: install
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install dependencies (frozen)
+        run: pnpm install --frozen-lockfile --prefer-offline
+      # 项目唯一校验入口：eslint(0 警告) + tsc 并发，任一失败即 kill-others-on-fail
+      # 输出须完整读取，禁止 head/tail 截断——CI 日志天然完整，勿二次管道截断
+      - name: Validate
+        run: pnpm validate
+
+  build:
+    name: Build (h5)
+    needs: [install, validate]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 9
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - name: Install dependencies (frozen)
+        run: pnpm install --frozen-lockfile --prefer-offline
+      # 建议 h5：pnpm build = pnpm build:web = taro build --type h5
+      # build:weapp 无法在无微信工具链的 runner 上完成预览上传
+      - name: Build H5
+        run: pnpm build
