@@ -3,6 +3,7 @@ export default defineAppConfig({
     'pages/index/index',
     'pages/login/index',
     'pages/memory-edit/index',
+    'pages/console/index',
   ],
   window: {
     backgroundTextStyle: 'light',

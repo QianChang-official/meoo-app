@@ -96,11 +96,20 @@ export default function IndexPage() {
       <View className="px-4 pt-6 pb-2">
         <View className="flex items-center justify-between">
           <Text className="text-2xl font-bold text-foreground">记忆笔记</Text>
-          <View
-            className="w-10 h-10 rounded-full bg-primary flex items-center justify-center"
-            onClick={onCreate}
-          >
-            <View className="i-lucide-plus w-5 h-5 text-primary-foreground" />
+          <View className="flex items-center gap-2">
+            <View
+              className="px-3 py-2 rounded-lg bg-card border border-border flex items-center gap-1"
+              onClick={() => Taro.navigateTo({ url: '/pages/console/index' })}
+            >
+              <View className="i-lucide-cpu w-4 h-4 text-foreground" />
+              <Text className="text-xs text-foreground">AI 控制台</Text>
+            </View>
+            <View
+              className="w-10 h-10 rounded-full bg-primary flex items-center justify-center"
+              onClick={onCreate}
+            >
+              <View className="i-lucide-plus w-5 h-5 text-primary-foreground" />
+            </View>
           </View>
         </View>
         <Text className="text-xs text-muted-foreground mt-1">
