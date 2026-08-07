@@ -22,10 +22,9 @@ jobs:
     timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
-      # pnpm 无全局安装的解法：官方 action 装 pnpm 9
+      # pnpm 无全局安装的解法：官方 action 装 pnpm（版本自动取 package.json 的 packageManager，
+      # 不显式写 version，避免与 pnpm@9.0.0 双重声明导致 "Multiple versions of pnpm specified"）
       - uses: pnpm/action-setup@v4
-        with:
-          version: 9
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -41,8 +40,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
-        with:
-          version: 9
       - uses: actions/setup-node@v4
         with:
           node-version: 22
@@ -62,8 +59,6 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v4
-        with:
-          version: 9
       - uses: actions/setup-node@v4
         with:
           node-version: 22
